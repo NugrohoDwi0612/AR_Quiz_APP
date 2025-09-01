@@ -1,0 +1,37 @@
+name: ar_quiz_app
+description: A new Flutter AR quiz application.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # AR & QR plugins
+  ar_flutter_plugin:
+    path: ./plugins/ar_flutter_plugin-0.7.3
+  qr_code_scanner:
+    path: ./plugins/qr_code_scanner-1.0.1
+
+  # Permission handler compatible with AR plugin
+  permission_handler: ^10.4.5
+  permission_handler_android:
+    path: ./plugins/permission_handler_android
+
+  # Other utilities
+  vector_math: ^2.1.4
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+
+flutter:
+  uses-material-design: true
+
+dependency_overrides:
+  permission_handler_android:
+    path: ./plugins/permission_handler_android
