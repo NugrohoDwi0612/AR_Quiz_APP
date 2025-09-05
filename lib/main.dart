@@ -10,7 +10,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // Panggil fungsi untuk menambahkan soal
+
+  // Panggil fungsi untuk menambahkan soal bila soal sudah di database, tutup code
   _addDummyQuestions();
 
   runApp(const MyApp());
@@ -18,6 +19,7 @@ void main() async {
 
 final FirebaseDB db = FirebaseDB();
 
+// Fungsi untuk menambahkan soal dummy bila soal sudah di database, tutup code
 void _addDummyQuestions() {
   db.addQuizQuestion(
     qrCodeId: 'soal_1',
