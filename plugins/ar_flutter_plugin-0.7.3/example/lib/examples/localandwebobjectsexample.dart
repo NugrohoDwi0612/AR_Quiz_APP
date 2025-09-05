@@ -17,7 +17,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_archive/flutter_archive.dart';
 
 class LocalAndWebObjectsWidget extends StatefulWidget {
-  LocalAndWebObjectsWidget({Key? key}) : super(key: key);
+  const LocalAndWebObjectsWidget({Key? key}) : super(key: key);
   @override
   _LocalAndWebObjectsWidgetState createState() =>
       _LocalAndWebObjectsWidgetState();
@@ -60,7 +60,7 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
                   children: [
                     ElevatedButton(
                         onPressed: onFileSystemObjectAtOriginButtonPressed,
-                        child: Text("Add/Remove Filesystem\nObject at Origin")),
+                        child: const Text("Add/Remove Filesystem\nObject at Origin")),
                   ],
                 ),
                 Row(
@@ -68,10 +68,10 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
                   children: [
                     ElevatedButton(
                         onPressed: onLocalObjectAtOriginButtonPressed,
-                        child: Text("Add/Remove Local\nObject at Origin")),
+                        child: const Text("Add/Remove Local\nObject at Origin")),
                     ElevatedButton(
                         onPressed: onWebObjectAtOriginButtonPressed,
-                        child: Text("Add/Remove Web\nObject at Origin")),
+                        child: const Text("Add/Remove Web\nObject at Origin")),
                   ],
                 ),
                 Row(
@@ -79,10 +79,10 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
                   children: [
                     ElevatedButton(
                         onPressed: onLocalObjectShuffleButtonPressed,
-                        child: Text("Shuffle Local\nobject at Origin")),
+                        child: const Text("Shuffle Local\nobject at Origin")),
                     ElevatedButton(
                         onPressed: onWebObjectShuffleButtonPressed,
-                        child: Text("Shuffle Web\nObject at Origin")),
+                        child: const Text("Shuffle Web\nObject at Origin")),
                   ],
                 )
               ]))
@@ -107,7 +107,7 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
     this.arObjectManager!.onInitialize();
 
     //Download model to file system
-    httpClient = new HttpClient();
+    httpClient = HttpClient();
     _downloadFile(
         "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
         "LocalDuck.glb");
@@ -122,9 +122,9 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = new File('$dir/$filename');
+    File file = File('$dir/$filename');
     await file.writeAsBytes(bytes);
-    print("Downloading finished, path: " + '$dir/$filename');
+    print("Downloading finished, path: " '$dir/$filename');
     return file;
   }
 
@@ -133,9 +133,9 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
     var response = await request.close();
     var bytes = await consolidateHttpClientResponseBytes(response);
     String dir = (await getApplicationDocumentsDirectory()).path;
-    File file = new File('$dir/$filename');
+    File file = File('$dir/$filename');
     await file.writeAsBytes(bytes);
-    print("Downloading finished, path: " + '$dir/$filename');
+    print("Downloading finished, path: " '$dir/$filename');
 
     // To print all files in the directory: print(Directory(dir).listSync());
     try {
@@ -143,14 +143,14 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
           zipFile: File('$dir/$filename'), destinationDir: Directory(dir));
       print("Unzipping successful");
     } catch (e) {
-      print("Unzipping failed: " + e.toString());
+      print("Unzipping failed: $e");
     }
   }
 
   Future<void> onLocalObjectAtOriginButtonPressed() async {
-    if (this.localObjectNode != null) {
-      this.arObjectManager!.removeNode(this.localObjectNode!);
-      this.localObjectNode = null;
+    if (localObjectNode != null) {
+      arObjectManager!.removeNode(localObjectNode!);
+      localObjectNode = null;
     } else {
       var newNode = ARNode(
           type: NodeType.localGLTF2,
@@ -158,30 +158,30 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
           scale: Vector3(0.2, 0.2, 0.2),
           position: Vector3(0.0, 0.0, 0.0),
           rotation: Vector4(1.0, 0.0, 0.0, 0.0));
-      bool? didAddLocalNode = await this.arObjectManager!.addNode(newNode);
-      this.localObjectNode = (didAddLocalNode!) ? newNode : null;
+      bool? didAddLocalNode = await arObjectManager!.addNode(newNode);
+      localObjectNode = (didAddLocalNode!) ? newNode : null;
     }
   }
 
   Future<void> onWebObjectAtOriginButtonPressed() async {
-    if (this.webObjectNode != null) {
-      this.arObjectManager!.removeNode(this.webObjectNode!);
-      this.webObjectNode = null;
+    if (webObjectNode != null) {
+      arObjectManager!.removeNode(webObjectNode!);
+      webObjectNode = null;
     } else {
       var newNode = ARNode(
           type: NodeType.webGLB,
           uri:
               "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
           scale: Vector3(0.2, 0.2, 0.2));
-      bool? didAddWebNode = await this.arObjectManager!.addNode(newNode);
-      this.webObjectNode = (didAddWebNode!) ? newNode : null;
+      bool? didAddWebNode = await arObjectManager!.addNode(newNode);
+      webObjectNode = (didAddWebNode!) ? newNode : null;
     }
   }
 
   Future<void> onFileSystemObjectAtOriginButtonPressed() async {
-    if (this.fileSystemNode != null) {
-      this.arObjectManager!.removeNode(this.fileSystemNode!);
-      this.fileSystemNode = null;
+    if (fileSystemNode != null) {
+      arObjectManager!.removeNode(fileSystemNode!);
+      fileSystemNode = null;
     } else {
       var newNode = ARNode(
           type: NodeType.fileSystemAppFolderGLB,
@@ -192,13 +192,13 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
       //    type: NodeType.fileSystemAppFolderGLTF2,
       //    uri: "Chicken_01.gltf",
       //    scale: Vector3(0.2, 0.2, 0.2));
-      bool? didAddFileSystemNode = await this.arObjectManager!.addNode(newNode);
-      this.fileSystemNode = (didAddFileSystemNode!) ? newNode : null;
+      bool? didAddFileSystemNode = await arObjectManager!.addNode(newNode);
+      fileSystemNode = (didAddFileSystemNode!) ? newNode : null;
     }
   }
 
   Future<void> onLocalObjectShuffleButtonPressed() async {
-    if (this.localObjectNode != null) {
+    if (localObjectNode != null) {
       var newScale = Random().nextDouble() / 3;
       var newTranslationAxis = Random().nextInt(3);
       var newTranslationAmount = Random().nextDouble() / 3;
@@ -215,12 +215,12 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
       newTransform.rotate(newRotationAxis, newRotationAmount);
       newTransform.scale(newScale);
 
-      this.localObjectNode!.transform = newTransform;
+      localObjectNode!.transform = newTransform;
     }
   }
 
   Future<void> onWebObjectShuffleButtonPressed() async {
-    if (this.webObjectNode != null) {
+    if (webObjectNode != null) {
       var newScale = Random().nextDouble() / 3;
       var newTranslationAxis = Random().nextInt(3);
       var newTranslationAmount = Random().nextDouble() / 3;
@@ -237,7 +237,7 @@ class _LocalAndWebObjectsWidgetState extends State<LocalAndWebObjectsWidget> {
       newTransform.rotate(newRotationAxis, newRotationAmount);
       newTransform.scale(newScale);
 
-      this.webObjectNode!.transform = newTransform;
+      webObjectNode!.transform = newTransform;
     }
   }
 }

@@ -73,7 +73,7 @@ class AndroidARView implements PlatformARView {
     _arViewCreatedCallback = arViewCreatedCallback;
     _planeDetectionConfig = planeDetectionConfig;
     // This is used in the platform side to register the view.
-    final String viewType = 'ar_flutter_plugin';
+    const String viewType = 'ar_flutter_plugin';
     // Pass parameters to the platform side.
     final Map<String, dynamic> creationParams = <String, dynamic>{};
 
@@ -108,7 +108,7 @@ class IosARView implements PlatformARView {
     _arViewCreatedCallback = arViewCreatedCallback;
     _planeDetectionConfig = planeDetectionConfig;
     // This is used in the platform side to register the view.
-    final String viewType = 'ar_flutter_plugin';
+    const String viewType = 'ar_flutter_plugin';
     // Pass parameters to the platform side.
     final Map<String, dynamic> creationParams = <String, dynamic>{};
 
@@ -142,7 +142,7 @@ class ARView extends StatefulWidget {
   /// Configures whether or not to display the device's platform type above the AR view. Defaults to false
   final bool showPlatformType;
 
-  ARView(
+  const ARView(
       {Key? key,
       required this.onARViewCreated,
       this.planeDetectionConfig = PlaneDetectionConfig.none,
@@ -155,11 +155,11 @@ class ARView extends StatefulWidget {
       : super(key: key);
   @override
   _ARViewState createState() => _ARViewState(
-      showPlatformType: this.showPlatformType,
-      permissionPromptDescription: this.permissionPromptDescription,
-      permissionPromptButtonText: this.permissionPromptButtonText,
+      showPlatformType: showPlatformType,
+      permissionPromptDescription: permissionPromptDescription,
+      permissionPromptButtonText: permissionPromptButtonText,
       permissionPromptParentalRestriction:
-          this.permissionPromptParentalRestriction);
+          permissionPromptParentalRestriction);
 }
 
 class _ARViewState extends State<ARView> {
@@ -250,7 +250,7 @@ class _ARViewState extends State<ARView> {
           return Center(child: Text(permissionPromptParentalRestriction));
         }
       default:
-        return Text('something went wrong');
+        return const Text('something went wrong');
     }
   }
 }

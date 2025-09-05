@@ -19,6 +19,8 @@ void main() {
 }
 
 class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   _MyAppState createState() => _MyAppState();
 }
@@ -72,7 +74,7 @@ class _MyAppState extends State<MyApp> {
 }
 
 class ExampleList extends StatelessWidget {
-  ExampleList({Key? key}) : super(key: key);
+  const ExampleList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +90,7 @@ class ExampleList extends StatelessWidget {
           () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => LocalAndWebObjectsWidget()))),
+                  builder: (context) => const LocalAndWebObjectsWidget()))),
       Example(
           'Anchors & Objects on Planes',
           'Place 3D objects on detected planes using anchors',
@@ -105,7 +107,7 @@ class ExampleList extends StatelessWidget {
           'Screenshots',
           'Place 3D objects on planes and take screenshots',
           () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ScreenshotWidget()))),
+              MaterialPageRoute(builder: (context) => const ScreenshotWidget()))),
       Example(
           'Cloud Anchors',
           'Place and retrieve 3D objects using the Google Cloud Anchor API',
@@ -127,7 +129,7 @@ class ExampleList extends StatelessWidget {
 }
 
 class ExampleCard extends StatelessWidget {
-  ExampleCard({Key? key, required this.example}) : super(key: key);
+  const ExampleCard({Key? key, required this.example}) : super(key: key);
   final Example example;
 
   @override

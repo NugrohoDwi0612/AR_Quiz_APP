@@ -24,7 +24,7 @@ class ARNode {
   })  : name = name ?? UniqueKey().toString(),
         transformNotifier = ValueNotifier(createTransformMatrix(
             transformation, position, scale, rotation, eulerAngles)),
-        data = data ?? null;
+        data = data;
 
   /// Specifies the receiver's [NodeType]
   NodeType type;
@@ -110,7 +110,7 @@ class ARNode {
         type: NodeType.values[map["type"]],
         uri: map["uri"] as String,
         name: map["name"] as String,
-        transformation: MatrixConverter().fromJson(map["transformation"]),
+        transformation: const MatrixConverter().fromJson(map["transformation"]),
         data: Map<String, dynamic>.from(map["data"]));
   }
 }
