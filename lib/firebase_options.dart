@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'hoaxhunter-ar.firebasestorage.app',
     measurementId: 'G-F816X7B5H9',
   );
+
 }

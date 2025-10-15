@@ -15,7 +15,7 @@ import 'examples/screenshotexample.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(children: [
           Text('Running on: $_platformVersion\n'),
-          Expanded(
+          const Expanded(
             child: ExampleList(),
           ),
         ]),
@@ -83,7 +83,7 @@ class ExampleList extends StatelessWidget {
           'Debug Options',
           'Visualize feature points, planes and world coordinate system',
           () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => DebugOptionsWidget()))),
+              MaterialPageRoute(builder: (context) => const DebugOptionsWidget()))),
       Example(
           'Local & Online Objects',
           'Place 3D objects from Flutter assets and the web into the scene',
@@ -97,12 +97,12 @@ class ExampleList extends StatelessWidget {
           () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ObjectsOnPlanesWidget()))),
+                  builder: (context) => const ObjectsOnPlanesWidget()))),
       Example(
           'Object Transformation Gestures',
           'Rotate and Pan Objects',
           () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => ObjectGesturesWidget()))),
+              MaterialPageRoute(builder: (context) => const ObjectGesturesWidget()))),
       Example(
           'Screenshots',
           'Place 3D objects on planes and take screenshots',
@@ -112,14 +112,14 @@ class ExampleList extends StatelessWidget {
           'Cloud Anchors',
           'Place and retrieve 3D objects using the Google Cloud Anchor API',
           () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CloudAnchorWidget()))),
+              MaterialPageRoute(builder: (context) => const CloudAnchorWidget()))),
       Example(
           'External Model Management',
           'Similar to Cloud Anchors example, but uses external database to choose from available 3D models',
           () => Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ExternalModelManagementWidget())))
+                  builder: (context) => const ExternalModelManagementWidget())))
     ];
     return ListView(
       children:

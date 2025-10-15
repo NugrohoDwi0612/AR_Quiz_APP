@@ -4,6 +4,7 @@ import 'firebase_options.dart';
 import 'panitia_page.dart';
 import 'peserta_page.dart';
 import 'package:ar_quiz_app/firebase_db.dart';
+import 'dart:io';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,7 +13,7 @@ void main() async {
   );
 
   // Panggil fungsi untuk menambahkan soal bila soal sudah di database, tutup code
-  _addDummyQuestions();
+  // _addDummyQuestions();
 
   runApp(const MyApp());
 }
@@ -20,134 +21,134 @@ void main() async {
 final FirebaseDB db = FirebaseDB();
 
 // Fungsi untuk menambahkan soal dummy bila soal sudah di database, tutup code
-void _addDummyQuestions() {
-  db.addQuizQuestion(
-    qrCodeId: 'soal_1',
-    questionText: 'Apa yang dimaksud dengan "hoax"?',
-    options: [
-      'Berita asli yang disalahpahami',
-      'Informasi yang disebarkan untuk bersenang-senang',
-      'Informasi palsu yang disengaja untuk menyesatkan',
-      'Opini pribadi yang tidak didukung fakta'
-    ],
-    correctAnswer: 'Informasi palsu yang disengaja untuk menyesatkan',
-    points: 100,
-  );
+// void _addDummyQuestions() {
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_1',
+//     questionText: 'Apa yang dimaksud dengan "hoax"?',
+//     options: [
+//       'Berita asli yang disalahpahami',
+//       'Informasi yang disebarkan untuk bersenang-senang',
+//       'Informasi palsu yang disengaja untuk menyesatkan',
+//       'Opini pribadi yang tidak didukung fakta'
+//     ],
+//     correctAnswer: 'Informasi palsu yang disengaja untuk menyesatkan',
+//     points: 100,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_2',
-    questionText: 'Salah satu ciri utama berita hoax adalah...',
-    options: [
-      'Menggunakan sumber terpercaya',
-      'Judul yang netral dan informatif',
-      'Menciptakan kebencian dan kepanikan',
-      'Memiliki data dan statistik yang lengkap'
-    ],
-    correctAnswer: 'Menciptakan kebencian dan kepanikan',
-    points: 100,
-  );
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_2',
+//     questionText: 'Salah satu ciri utama berita hoax adalah...',
+//     options: [
+//       'Menggunakan sumber terpercaya',
+//       'Judul yang netral dan informatif',
+//       'Menciptakan kebencian dan kepanikan',
+//       'Memiliki data dan statistik yang lengkap'
+//     ],
+//     correctAnswer: 'Menciptakan kebencian dan kepanikan',
+//     points: 100,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_3',
-    questionText:
-        'Berita yang dibuat dengan tujuan memecah belah masyarakat sering disebut sebagai...',
-    options: ['Clickbait', 'Propaganda', 'Disinformasi', 'Misinformasi'],
-    correctAnswer: 'Disinformasi',
-    points: 150,
-  );
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_3',
+//     questionText:
+//         'Berita yang dibuat dengan tujuan memecah belah masyarakat sering disebut sebagai...',
+//     options: ['Clickbait', 'Propaganda', 'Disinformasi', 'Misinformasi'],
+//     correctAnswer: 'Disinformasi',
+//     points: 150,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_4',
-    questionText:
-        'Apa langkah pertama yang harus dilakukan ketika menerima informasi yang meragukan?',
-    options: [
-      'Segera bagikan ke teman',
-      'Tanyakan ke media sosial',
-      'Verifikasi kebenaran informasi tersebut',
-      'Abaikan saja tanpa melakukan apa-apa'
-    ],
-    correctAnswer: 'Verifikasi kebenaran informasi tersebut',
-    points: 150,
-  );
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_4',
+//     questionText:
+//         'Apa langkah pertama yang harus dilakukan ketika menerima informasi yang meragukan?',
+//     options: [
+//       'Segera bagikan ke teman',
+//       'Tanyakan ke media sosial',
+//       'Verifikasi kebenaran informasi tersebut',
+//       'Abaikan saja tanpa melakukan apa-apa'
+//     ],
+//     correctAnswer: 'Verifikasi kebenaran informasi tersebut',
+//     points: 150,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_5',
-    questionText:
-        'Situs web berita yang kredibel biasanya memiliki ciri-ciri...',
-    options: [
-      'Nama domain yang tidak dikenal',
-      'Alamat yang jelas dan kontak redaksi',
-      'Isi berita yang berlebihan',
-      'Iklan pop-up yang mengganggu'
-    ],
-    correctAnswer: 'Alamat yang jelas dan kontak redaksi',
-    points: 100,
-  );
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_5',
+//     questionText:
+//         'Situs web berita yang kredibel biasanya memiliki ciri-ciri...',
+//     options: [
+//       'Nama domain yang tidak dikenal',
+//       'Alamat yang jelas dan kontak redaksi',
+//       'Isi berita yang berlebihan',
+//       'Iklan pop-up yang mengganggu'
+//     ],
+//     correctAnswer: 'Alamat yang jelas dan kontak redaksi',
+//     points: 100,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_6',
-    questionText:
-        'Jenis hoax yang mencoba mempengaruhi emosi pembaca dengan judul sensasional disebut...',
-    options: ['Clickbait', 'Malware', 'Hoax finansial', 'Deepfake'],
-    correctAnswer: 'Clickbait',
-    points: 150,
-  );
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_6',
+//     questionText:
+//         'Jenis hoax yang mencoba mempengaruhi emosi pembaca dengan judul sensasional disebut...',
+//     options: ['Clickbait', 'Malware', 'Hoax finansial', 'Deepfake'],
+//     correctAnswer: 'Clickbait',
+//     points: 150,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_7',
-    questionText: 'Mengapa menyebarkan hoax dapat berbahaya bagi masyarakat?',
-    options: [
-      'Menghabiskan kuota internet',
-      'Membuat orang lebih pintar',
-      'Dapat merusak reputasi dan memicu konflik sosial',
-      'Tidak ada efek serius'
-    ],
-    correctAnswer: 'Dapat merusak reputasi dan memicu konflik sosial',
-    points: 200,
-  );
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_7',
+//     questionText: 'Mengapa menyebarkan hoax dapat berbahaya bagi masyarakat?',
+//     options: [
+//       'Menghabiskan kuota internet',
+//       'Membuat orang lebih pintar',
+//       'Dapat merusak reputasi dan memicu konflik sosial',
+//       'Tidak ada efek serius'
+//     ],
+//     correctAnswer: 'Dapat merusak reputasi dan memicu konflik sosial',
+//     points: 200,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_8',
-    questionText:
-        'Bagaimana cara memverifikasi kebenaran sebuah foto atau video?',
-    options: [
-      'Bertanya di grup WhatsApp',
-      'Mencari sumber asli atau menggunakan pencarian gambar terbalik (reverse image search)',
-      'Mengandalkan ingatan pribadi',
-      'Tidak perlu dicek, langsung percaya'
-    ],
-    correctAnswer:
-        'Mencari sumber asli atau menggunakan pencarian gambar terbalik (reverse image search)',
-    points: 200,
-  );
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_8',
+//     questionText:
+//         'Bagaimana cara memverifikasi kebenaran sebuah foto atau video?',
+//     options: [
+//       'Bertanya di grup WhatsApp',
+//       'Mencari sumber asli atau menggunakan pencarian gambar terbalik (reverse image search)',
+//       'Mengandalkan ingatan pribadi',
+//       'Tidak perlu dicek, langsung percaya'
+//     ],
+//     correctAnswer:
+//         'Mencari sumber asli atau menggunakan pencarian gambar terbalik (reverse image search)',
+//     points: 200,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_9',
-    questionText:
-        'Di Indonesia, lembaga pemerintah yang berwenang menangani isu hoax adalah...',
-    options: [
-      'Kementerian Lingkungan Hidup dan Kehutanan',
-      'Kementerian Komunikasi dan Informatika (Kominfo)',
-      'Kementerian Pariwisata',
-      'Kementerian Pertahanan'
-    ],
-    correctAnswer: 'Kementerian Komunikasi dan Informatika (Kominfo)',
-    points: 150,
-  );
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_9',
+//     questionText:
+//         'Di Indonesia, lembaga pemerintah yang berwenang menangani isu hoax adalah...',
+//     options: [
+//       'Kementerian Lingkungan Hidup dan Kehutanan',
+//       'Kementerian Komunikasi dan Informatika (Kominfo)',
+//       'Kementerian Pariwisata',
+//       'Kementerian Pertahanan'
+//     ],
+//     correctAnswer: 'Kementerian Komunikasi dan Informatika (Kominfo)',
+//     points: 150,
+//   );
 
-  db.addQuizQuestion(
-    qrCodeId: 'soal_10',
-    questionText: 'Seringkali, berita hoax disebarkan melalui...',
-    options: [
-      'Jurnal ilmiah',
-      'Media sosial dan aplikasi pesan instan',
-      'Ensiklopedia resmi',
-      'Dokumen pemerintah yang rahasia'
-    ],
-    correctAnswer: 'Media sosial dan aplikasi pesan instan',
-    points: 100,
-  );
-}
+//   db.addQuizQuestion(
+//     qrCodeId: 'soal_10',
+//     questionText: 'Seringkali, berita hoax disebarkan melalui...',
+//     options: [
+//       'Jurnal ilmiah',
+//       'Media sosial dan aplikasi pesan instan',
+//       'Ensiklopedia resmi',
+//       'Dokumen pemerintah yang rahasia'
+//     ],
+//     correctAnswer: 'Media sosial dan aplikasi pesan instan',
+//     points: 100,
+//   );
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -264,10 +265,11 @@ class HomePage extends StatelessWidget {
           actions: [
             _buildDialogButton('Yes', () {
               Navigator.of(context).pop();
+              exit(0); // Menutup aplikasi
             }),
             const SizedBox(width: 10),
             _buildDialogButton('No', () {
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(); // Hanya menutup dialog
             }),
           ],
         );

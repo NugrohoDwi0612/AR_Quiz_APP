@@ -7,7 +7,7 @@ import 'package:ar_flutter_plugin/ar_flutter_plugin.dart';
 import 'package:ar_flutter_plugin/datatypes/config_planedetection.dart';
 
 class DebugOptionsWidget extends StatefulWidget {
-  DebugOptionsWidget({Key? key}) : super(key: key);
+  const DebugOptionsWidget({Key? key}) : super(key: key);
   @override
   _DebugOptionsWidgetState createState() => _DebugOptionsWidgetState();
 }
@@ -18,9 +18,9 @@ class _DebugOptionsWidgetState extends State<DebugOptionsWidget> {
   bool _showFeaturePoints = false;
   bool _showPlanes = false;
   bool _showWorldOrigin = false;
-  bool _showAnimatedGuide = true;
-  String _planeTexturePath = "Images/triangle.png";
-  bool _handleTaps = false;
+  final bool _showAnimatedGuide = true;
+  final String _planeTexturePath = "Images/triangle.png";
+  final bool _handleTaps = false;
 
   @override
   void dispose() {
@@ -45,7 +45,7 @@ class _DebugOptionsWidgetState extends State<DebugOptionsWidget> {
             alignment: FractionalOffset.bottomRight,
             child: Container(
               width: MediaQuery.of(context).size.width * 0.5,
-              color: Color(0xFFFFFFF).withOpacity(0.5),
+              color: const Color(0x0fffffff).withOpacity(0.5),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 mainAxisSize: MainAxisSize.min,
@@ -107,7 +107,7 @@ class _DebugOptionsWidgetState extends State<DebugOptionsWidget> {
   }
 
   void updateSessionSettings() {
-    this.arSessionManager!.onInitialize(
+    arSessionManager!.onInitialize(
           showFeaturePoints: _showFeaturePoints,
           showPlanes: _showPlanes,
           customPlaneTexturePath: _planeTexturePath,

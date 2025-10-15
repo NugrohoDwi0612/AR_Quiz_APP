@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:ar_flutter_plugin/ar_flutter_plugin.dart';
-import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
-import 'package:ar_flutter_plugin/datatypes/node_types.dart';
-import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
-import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
-import 'package:ar_flutter_plugin/models/ar_node.dart';
+import 'package:ar_flutter_plugin_2/ar_flutter_plugin.dart';
+import 'package:ar_flutter_plugin_2/datatypes/hittest_result_types.dart';
+import 'package:ar_flutter_plugin_2/datatypes/node_types.dart';
+import 'package:ar_flutter_plugin_2/managers/ar_anchor_manager.dart';
+import 'package:ar_flutter_plugin_2/managers/ar_location_manager.dart';
+import 'package:ar_flutter_plugin_2/managers/ar_object_manager.dart';
+import 'package:ar_flutter_plugin_2/managers/ar_session_manager.dart';
+import 'package:ar_flutter_plugin_2/models/ar_hittest_result.dart';
+import 'package:ar_flutter_plugin_2/models/ar_node.dart';
+import 'package:ar_flutter_plugin_2/widgets/ar_view.dart';
 import 'package:vector_math/vector_math_64.dart' as vector;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:ar_quiz_app/firebase_db.dart';
 
 const bool isArEnabled = true;
@@ -45,8 +46,8 @@ class _ARQuizPageState extends State<ARQuizPage> {
   String? activeQuizId;
   late final DocumentReference _playerScoreRef;
   late final FirebaseDB _firebaseDB;
-  QRViewController? _qrViewController;
-  final GlobalKey _qrKey = GlobalKey(debugLabel: 'QR');
+  final MobileScannerController _mobileScannerController =
+      MobileScannerController();
   bool isScanning = true;
 
   @override
@@ -67,7 +68,7 @@ class _ARQuizPageState extends State<ARQuizPage> {
     if (isArEnabled) {
       arSessionManager?.dispose();
     }
-    _qrViewController?.dispose();
+    _mobileScannerController.dispose();
     super.dispose();
   }
 
@@ -114,19 +115,17 @@ class _ARQuizPageState extends State<ARQuizPage> {
     quizNodes.add(quizBoardNode);
   }
 
-  void _onQRViewCreated(QRViewController controller) {
-    _qrViewController = controller;
-    _qrViewController?.scannedDataStream.listen((scanData) {
-      _qrViewController?.pauseCamera();
-      if (scanData.code != null) {
-        _loadQuizFromQR(scanData.code!);
-      } else {
-        setState(() {
-          feedbackMessage = 'Kode QR tidak valid.';
-          isScanning = false;
-        });
-      }
-    });
+  void _onDetect(BarcodeCapture barcodeCapture) {
+    _mobileScannerController.stop();
+    final barcode = barcodeCapture.barcodes.firstOrNull;
+    if (barcode?.rawValue != null) {
+      _loadQuizFromQR(barcode!.rawValue!);
+    } else {
+      setState(() {
+        feedbackMessage = 'Kode QR tidak valid.';
+        isScanning = false;
+      });
+    }
   }
 
   Future<void> _loadQuizFromQR(String quizId) async {
@@ -136,7 +135,6 @@ class _ARQuizPageState extends State<ARQuizPage> {
     });
 
     try {
-      // Pengecekan riwayat pemindaian
       final hasScanned = await _firebaseDB.hasPlayerScannedQuiz(
         lobbyCode: widget.lobbyCode,
         teamId: widget.teamId,
@@ -237,7 +235,7 @@ class _ARQuizPageState extends State<ARQuizPage> {
       isScanning = true;
     });
 
-    _qrViewController?.resumeCamera();
+    _mobileScannerController.start();
   }
 
   @override
@@ -247,16 +245,9 @@ class _ARQuizPageState extends State<ARQuizPage> {
       body: Stack(
         children: [
           if (isScanning)
-            QRView(
-              key: _qrKey,
-              onQRViewCreated: _onQRViewCreated,
-              overlay: QrScannerOverlayShape(
-                borderColor: Colors.red,
-                borderRadius: 10,
-                borderLength: 30,
-                borderWidth: 10,
-                cutOutSize: 250,
-              ),
+            MobileScanner(
+              controller: _mobileScannerController,
+              onDetect: _onDetect,
             )
           else if (isArEnabled)
             ARView(onARViewCreated: onARViewCreated)

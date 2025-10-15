@@ -10,16 +10,11 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # AR & QR plugins
-  ar_flutter_plugin:
-    path: ./plugins/ar_flutter_plugin-0.7.3
-  qr_code_scanner:
-    path: ./plugins/qr_code_scanner-1.0.1
-
-  # Permission handler compatible with AR plugin
-  permission_handler: ^10.4.5
-  permission_handler_android:
-    path: ./plugins/permission_handler_android
+  ar_flutter_plugin_2: ^0.0.3
+  # qr_code_scanner:
+  #   path: ./plugins/qr_code_scanner-1.0.1
+  mobile_scanner: ^7.0.1
+  permission_handler: ^11.3.1
 
   # Other utilities
   image_gallery_saver_plus: ^4.0.1
@@ -32,6 +27,13 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
+  min_sdk_android: 21
 
 flutter:
   uses-material-design: true
@@ -42,7 +44,3 @@ flutter:
     - family: PeaceSans
       fonts:
         - asset: assets/fonts/PeaceSans.ttf
-
-dependency_overrides:
-  permission_handler_android:
-    path: ./plugins/permission_handler_android

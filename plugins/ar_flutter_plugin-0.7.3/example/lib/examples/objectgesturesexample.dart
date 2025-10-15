@@ -15,7 +15,7 @@ import 'package:vector_math/vector_math_64.dart';
 import 'dart:math';
 
 class ObjectGesturesWidget extends StatefulWidget {
-  ObjectGesturesWidget({Key? key}) : super(key: key);
+  const ObjectGesturesWidget({Key? key}) : super(key: key);
   @override
   _ObjectGesturesWidgetState createState() => _ObjectGesturesWidgetState();
 }
@@ -53,7 +53,7 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
                 children: [
                   ElevatedButton(
                       onPressed: onRemoveEverything,
-                      child: Text("Remove Everything")),
+                      child: const Text("Remove Everything")),
                 ]),
           )
         ])));
@@ -91,9 +91,9 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
     /*nodes.forEach((node) {
       this.arObjectManager.removeNode(node);
     });*/
-    anchors.forEach((anchor) {
-      this.arAnchorManager!.removeAnchor(anchor);
-    });
+    for (var anchor in anchors) {
+      arAnchorManager!.removeAnchor(anchor);
+    }
     anchors = [];
   }
 
@@ -101,45 +101,43 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
       List<ARHitTestResult> hitTestResults) async {
     var singleHitTestResult = hitTestResults.firstWhere(
         (hitTestResult) => hitTestResult.type == ARHitTestResultType.plane);
-    if (singleHitTestResult != null) {
-      var newAnchor =
-          ARPlaneAnchor(transformation: singleHitTestResult.worldTransform);
-      bool? didAddAnchor = await this.arAnchorManager!.addAnchor(newAnchor);
-      if (didAddAnchor!) {
-        this.anchors.add(newAnchor);
-        // Add note to anchor
-        var newNode = ARNode(
-            type: NodeType.webGLB,
-            uri:
-                "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
-            scale: Vector3(0.2, 0.2, 0.2),
-            position: Vector3(0.0, 0.0, 0.0),
-            rotation: Vector4(1.0, 0.0, 0.0, 0.0));
-        bool? didAddNodeToAnchor =
-            await this.arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
-        if (didAddNodeToAnchor!) {
-          this.nodes.add(newNode);
-        } else {
-          this.arSessionManager!.onError("Adding Node to Anchor failed");
-        }
+    var newAnchor =
+        ARPlaneAnchor(transformation: singleHitTestResult.worldTransform);
+    bool? didAddAnchor = await arAnchorManager!.addAnchor(newAnchor);
+    if (didAddAnchor!) {
+      anchors.add(newAnchor);
+      // Add note to anchor
+      var newNode = ARNode(
+          type: NodeType.webGLB,
+          uri:
+              "https://github.com/KhronosGroup/glTF-Sample-Models/raw/master/2.0/Duck/glTF-Binary/Duck.glb",
+          scale: Vector3(0.2, 0.2, 0.2),
+          position: Vector3(0.0, 0.0, 0.0),
+          rotation: Vector4(1.0, 0.0, 0.0, 0.0));
+      bool? didAddNodeToAnchor =
+          await arObjectManager!.addNode(newNode, planeAnchor: newAnchor);
+      if (didAddNodeToAnchor!) {
+        nodes.add(newNode);
       } else {
-        this.arSessionManager!.onError("Adding Anchor failed");
+        arSessionManager!.onError("Adding Node to Anchor failed");
       }
+    } else {
+      arSessionManager!.onError("Adding Anchor failed");
     }
-  }
+    }
 
   onPanStarted(String nodeName) {
-    print("Started panning node " + nodeName);
+    print("Started panning node $nodeName");
   }
 
   onPanChanged(String nodeName) {
-    print("Continued panning node " + nodeName);
+    print("Continued panning node $nodeName");
   }
 
   onPanEnded(String nodeName, Matrix4 newTransform) {
-    print("Ended panning node " + nodeName);
+    print("Ended panning node $nodeName");
     final pannedNode =
-        this.nodes.firstWhere((element) => element.name == nodeName);
+        nodes.firstWhere((element) => element.name == nodeName);
 
     /*
     * Uncomment the following command if you want to keep the transformations of the Flutter representations of the nodes up to date
@@ -149,17 +147,17 @@ class _ObjectGesturesWidgetState extends State<ObjectGesturesWidget> {
   }
 
   onRotationStarted(String nodeName) {
-    print("Started rotating node " + nodeName);
+    print("Started rotating node $nodeName");
   }
 
   onRotationChanged(String nodeName) {
-    print("Continued rotating node " + nodeName);
+    print("Continued rotating node $nodeName");
   }
 
   onRotationEnded(String nodeName, Matrix4 newTransform) {
-    print("Ended rotating node " + nodeName);
+    print("Ended rotating node $nodeName");
     final rotatedNode =
-        this.nodes.firstWhere((element) => element.name == nodeName);
+        nodes.firstWhere((element) => element.name == nodeName);
 
     /*
     * Uncomment the following command if you want to keep the transformations of the Flutter representations of the nodes up to date
