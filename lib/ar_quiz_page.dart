@@ -13,6 +13,7 @@ import 'package:vector_math/vector_math_64.dart' as vector;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:ar_quiz_app/firebase_db.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // <<< IMPORT BARU
 
 const bool isArEnabled = true;
 
@@ -71,6 +72,22 @@ class _ARQuizPageState extends State<ARQuizPage> {
     _mobileScannerController.dispose();
     super.dispose();
   }
+
+  // ==========================================================
+  // >>> FUNGSI KELUAR SESI BARU (MENGHAPUS SHARED PREFS) <<<
+  // ==========================================================
+  Future<void> _logoutLobby() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('last_lobby_code');
+    await prefs.remove('last_team_id');
+    await prefs.remove('last_player_id');
+
+    if (mounted) {
+      // Kembali ke halaman root/utama (tempat input kode baru berada)
+      Navigator.of(context).popUntil((route) => route.isFirst);
+    }
+  }
+  // ==========================================================
 
   void onARViewCreated(
     ARSessionManager arSessionManager,
@@ -185,6 +202,7 @@ class _ARQuizPageState extends State<ARQuizPage> {
       isAnswerSubmitted = true;
     });
 
+    // Asumsi 'correct_answer' dan 'points' ada
     if (answer == activeQuizData!['correct_answer']) {
       await _firebaseDB.updatePlayerAndTeamScore(
         lobbyCode: widget.lobbyCode,
@@ -396,19 +414,28 @@ class _ARQuizPageState extends State<ARQuizPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: const Text(
-                            'Kembali',
-                            style: TextStyle(color: Colors.red, fontSize: 18),
+                        // >>> PERUBAHAN DI SINI <<<
+                        TextButton.icon(
+                          icon: const Icon(Icons.exit_to_app,
+                              color: Colors.red), // Tambahkan ikon
+                          label: const Text(
+                            'Keluar Sesi', // Teks tombol
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          onPressed: _logoutLobby, // Memanggil fungsi logout
                         ),
+                        // AKHIR PERUBAHAN
                         StreamBuilder<DocumentSnapshot>(
                           stream: _playerScoreRef.snapshots(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState ==
                                 ConnectionState.waiting) {
-                              return const CircularProgressIndicator();
+                              return const SizedBox
+                                  .shrink(); // Ganti progress indicator yang besar
                             }
                             if (snapshot.hasError) {
                               return Text('Error: ${snapshot.error}');

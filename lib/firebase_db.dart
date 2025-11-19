@@ -28,24 +28,55 @@ class FirebaseDB {
     ));
   }
 
-  Future<void> createLobby(String lobbyCode) async {
-    await _firestore.collection('lobbies').doc(lobbyCode).set({
+  // Future<void> createLobby(String lobbyCode) async {
+  //   await _firestore.collection('lobbies').doc(lobbyCode).set({
+  //     'status': 'WAITING',
+  //     'created_at': FieldValue.serverTimestamp(),
+  //   });
+  // }
+
+  // Dalam class FirebaseDB
+  Future<void> createLobby(String code, {String? hostId}) async {
+    await _firestore.collection('lobbies').doc(code).set({
       'status': 'WAITING',
       'created_at': FieldValue.serverTimestamp(),
+      'host_id': hostId,
     });
   }
 
-  Future<DocumentReference> addTeamToLobby(
-      String lobbyCode, String teamName) async {
+  // Future<DocumentReference> addTeamToLobby(
+  //     String lobbyCode, String teamName) async {
+  //   return await _firestore
+  //       .collection('lobbies')
+  //       .doc(lobbyCode)
+  //       .collection('teams')
+  //       .add({
+  //     'team_name': teamName,
+  //     'is_joined': false,
+  //     'score': 0,
+  //   });
+  // }
+
+  Future<DocumentReference> addTeamToLobby(String lobbyCode, String teamName,
+      {int? order} // Tambahkan parameter order (opsional, bisa null)
+      ) async {
+    // Siapkan data dasar
+    final teamData = {
+      'team_name': teamName,
+      'is_joined': false,
+      'score': 0,
+    };
+
+    // Jika order diberikan, masukkan ke dalam data
+    if (order != null) {
+      teamData['order'] = order;
+    }
+
     return await _firestore
         .collection('lobbies')
         .doc(lobbyCode)
         .collection('teams')
-        .add({
-      'team_name': teamName,
-      'is_joined': false,
-      'score': 0,
-    });
+        .add(teamData);
   }
 
   Stream<QuerySnapshot> getLobbyTeams(String lobbyCode) {
@@ -68,7 +99,14 @@ class FirebaseDB {
   }
 
   Future<String> addPlayerToTeam(
-      String lobbyCode, String teamId, String playerName) async {
+    String lobbyCode,
+    String teamId,
+    String playerName,
+    String? localUserId, // <<< Tambahkan parameter ini
+  ) async {
+    // Buat ID Pemain. Kita akan gunakan localUserId jika ada
+    final playerId = localUserId ??
+        FirebaseFirestore.instance.collection('players').doc().id;
     final teamDoc = await _firestore
         .collection('lobbies')
         .doc(lobbyCode)
@@ -76,23 +114,42 @@ class FirebaseDB {
         .doc(teamId)
         .get();
     final teamName = teamDoc.data()?['team_name'] as String? ?? 'N/A';
-
-    final playerDocRef = await _firestore
+    await _firestore
         .collection('lobbies')
         .doc(lobbyCode)
         .collection('teams')
         .doc(teamId)
         .collection('players')
-        .add({
-      'player_name': playerName,
+        .doc(playerId)
+        .set({
+      'name': playerName,
       'score': 0,
       'joined_at': FieldValue.serverTimestamp(),
+      'is_host': false,
+      'device_id': playerId, // Gunakan playerId/localUserId sebagai device_id
       'lobbyCode': lobbyCode,
       'team_name': teamName,
     });
-
     await updateTeam(lobbyCode, teamId, {'is_joined': true});
-    return playerDocRef.id;
+    return playerId;
+  }
+
+  Future<DocumentSnapshot?> getTeamById(String lobbyCode, String teamId) async {
+    try {
+      final doc = await _firestore
+          .collection('lobbies')
+          .doc(lobbyCode)
+          .collection('teams')
+          .doc(teamId)
+          .get();
+
+      // Mengembalikan data tim, atau null jika dokumen tidak ada
+      return doc;
+    } catch (e) {
+      // Anda mungkin ingin menambahkan log error di sini
+      print('Error getting team data: $e');
+      return null;
+    }
   }
 
   Stream<QuerySnapshot> getPlayersInTeam(String lobbyCode, String teamId) {

@@ -6,7 +6,7 @@ import 'package:flutter/rendering.dart';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'firebase_db.dart';
+import 'firebase_db.dart'; // Pastikan file ini ada
 
 class DownloadQRPage extends StatefulWidget {
   const DownloadQRPage({super.key});
@@ -18,26 +18,87 @@ class DownloadQRPage extends StatefulWidget {
 class _DownloadQRPageState extends State<DownloadQRPage> {
   final FirebaseDB _db = FirebaseDB();
   late List<GlobalKey> _qrKeys;
+  PermissionStatus _storageStatus = PermissionStatus.denied;
 
   @override
   void initState() {
     super.initState();
     _qrKeys = [];
+    _requestPermission(); // Panggil fungsi permintaan izin saat inisialisasi
   }
 
+  // --- FUNGSI BARU UNTUK MEMINTA DAN MEMERIKSA IZIN ---
+  Future<void> _requestPermission() async {
+    final status = await Permission.storage.request();
+    if (mounted) {
+      setState(() {
+        _storageStatus = status;
+      });
+      // Beri umpan balik jika ditolak/dibatasi
+      if (status.isPermanentlyDenied) {
+        _showPermissionDeniedDialog();
+      }
+    }
+  }
+
+  // --- FUNGSI UNTUK MENAMPILKAN DIALOG JIKA IZIN DITOLAK PERMANEN ---
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Izin Penyimpanan Diperlukan'),
+          content: const Text(
+              'Untuk menyimpan QR Code, kami memerlukan izin penyimpanan. Silakan aktifkan di Pengaturan Aplikasi.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Batal'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('Buka Pengaturan'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                openAppSettings(); // Shortcut ke pengaturan aplikasi
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // PERBAIKAN PADA FUNGSI _downloadQR
   Future<void> _downloadQR(
       String data, String fileName, GlobalKey qrKey) async {
-    // Minta izin penyimpanan
-    var status = await Permission.storage.request();
+    // 1. Cek status izin saat ini
+    var status = await Permission.storage.status;
+
+    // 2. Jika izin ditolak (tapi belum permanen), coba minta lagi
+    if (status.isDenied) {
+      status = await Permission.storage.request();
+    }
+
+    // 3. Jika izin ditolak permanen, tampilkan dialog Pengaturan
+    if (status.isPermanentlyDenied) {
+      _showPermissionDeniedDialog();
+      return;
+    }
+
+    // 4. Jika izin masih ditolak setelah permintaan (isDenied), hentikan dan beri feedback.
     if (status.isDenied) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Izin penyimpanan ditolak.')),
+          const SnackBar(
+              content: Text('Izin penyimpanan diperlukan untuk mengunduh.')),
         );
       }
       return;
     }
 
+    // Jika status.isGranted, lanjutkan proses unduh
     try {
       // Mengambil gambar QR dari widget (RenderRepaintBoundary)
       final RenderRepaintBoundary boundary =
@@ -53,7 +114,7 @@ class _DownloadQRPageState extends State<DownloadQRPage> {
         name: fileName,
       );
 
-      //  Berikan umpan balik
+      // Berikan umpan balik sukses/gagal unduh
       if (mounted) {
         if (result['isSuccess']) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -68,7 +129,7 @@ class _DownloadQRPageState extends State<DownloadQRPage> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Terjadi kesalahan: $e')),
+          SnackBar(content: Text('Terjadi kesalahan saat menyimpan: $e')),
         );
       }
     }
@@ -117,6 +178,30 @@ class _DownloadQRPageState extends State<DownloadQRPage> {
                 ),
               ),
               const SizedBox(height: 20),
+
+              // --- TAMPILKAN WIDGET PERINGATAN JIKA IZIN DITOLAK ---
+              if (_storageStatus.isPermanentlyDenied)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 15.0),
+                  child: Card(
+                    color: Colors.red[50],
+                    elevation: 1,
+                    child: ListTile(
+                      leading: const Icon(Icons.warning_amber_rounded,
+                          color: Colors.red),
+                      title: const Text('Izin Penyimpanan Ditolak Permanen'),
+                      subtitle: const Text(
+                          'Anda harus mengaktifkan izin secara manual di pengaturan perangkat.'),
+                      trailing: TextButton(
+                        onPressed: openAppSettings, // Shortcut ke pengaturan
+                        child: const Text('Pengaturan',
+                            style: TextStyle(color: Colors.red)),
+                      ),
+                    ),
+                  ),
+                ),
+              // --------------------------------------------------------
+
               Expanded(
                 child: FutureBuilder<QuerySnapshot>(
                   future: _db.getQuizQuestions(),
@@ -134,8 +219,11 @@ class _DownloadQRPageState extends State<DownloadQRPage> {
                     }
 
                     final quizDocs = snapshot.data!.docs;
-                    _qrKeys =
-                        List.generate(quizDocs.length, (index) => GlobalKey());
+                    // Inisialisasi _qrKeys di sini karena jumlah dokumen sudah diketahui
+                    if (_qrKeys.length != quizDocs.length) {
+                      _qrKeys = List.generate(
+                          quizDocs.length, (index) => GlobalKey());
+                    }
 
                     return ListView.builder(
                       itemCount: quizDocs.length,
@@ -180,6 +268,7 @@ class _DownloadQRPageState extends State<DownloadQRPage> {
             style: const TextStyle(fontSize: 18),
           ),
           ElevatedButton(
+            // Tombol download akan bekerja jika izin sudah didapatkan, atau akan memicu permintaan ulang
             onPressed: () => _downloadQR(
                 qrData, title.replaceAll(' ', '_').toLowerCase(), qrKey),
             child: const Text('Download'),
